@@ -4,6 +4,15 @@ const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const Booking = require('../models/bookingModel');
 
+// This middleware put the take the alert from the query string or url and put the alert message into res.locals which will be available to evry template and read and display by javascript
+exports.alerts = (req, res, next) => {
+  const { alert } = req.query;
+  if (alert === 'Booking')
+    res.locals.alert =
+      'Your Booking was successful ! Please check your email for confirmation';
+  next();
+};
+
 exports.getOverview = catchAsync(async (req, res, next) => {
   //1) Get Tour data from collections
   const tours = await Tour.find();
