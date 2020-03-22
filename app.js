@@ -29,7 +29,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // 1) GLOBAL MIDDLEWARE
 // Implementation of cors
-app.use(cors);
+app.use(cors());
 // Acess-control-allow-origin header to all coming requests
 // iN case we want to only all request from a particular domain or subdomain
 // The below code will only allow requests from "http://www.natours.com"
