@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -27,6 +28,20 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // 1) GLOBAL MIDDLEWARE
+// Implementation of cors
+app.use(cors);
+// Acess-control-allow-origin header to all coming requests
+// iN case we want to only all request from a particular domain or subdomain
+// The below code will only allow requests from "http://www.natours.com"
+// app.use(
+//   cors({
+//     origin: 'http://www.natours.com'
+//   })
+// );
+
+// Allow to perform OPTIONS requests during pre-flight phase
+app.options('*', cors());
+// app.options('/api.v1/tours/:id', cors());
 
 //SERVING STATIC FILES --  Important for serving static assets like images or ccs or icons etc to the client
 // app.use(express.static(`${__dirname}/public`));
