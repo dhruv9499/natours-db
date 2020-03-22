@@ -12,7 +12,7 @@ const signToken = id => {
   });
 };
 
-const createSendToke = (user, statusCode, res) => {
+const createSendToke = (user, statusCode, req, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
     expires: new Date(
@@ -22,7 +22,7 @@ const createSendToke = (user, statusCode, res) => {
     httpOnly: true // this prevents that cookie cannot be modified by browser in any way
   };
 
-  if (process.env.NODE_ENV === 'production') {
+  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
     cookieOptions.secure = true;
   }
 
@@ -53,7 +53,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome();
-  createSendToke(newUser, 201, res);
+  createSendToke(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -75,7 +75,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   // 3) if everything is ok , send token to client
-  createSendToke(user, 200, res);
+  createSendToke(user, 200, req, res);
 });
 
 exports.logout = (req, res, next) => {
@@ -251,7 +251,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // 3) Update changedPasswordAt property for the users
 
   // 4) Log the user in , send JWT
-  createSendToke(user, 200, res);
+  createSendToke(user, 200, req, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -269,5 +269,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // user.findByIdandUpdate will not work in this case as validators and pre save hooks will not run on update
 
   // 4) Log in the user , send new JWT token
-  createSendToke(user, 200, res);
+  createSendToke(user, 200, req, res);
 });
